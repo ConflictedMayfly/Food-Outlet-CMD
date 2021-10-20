@@ -1,5 +1,3 @@
-package SwiftFood;
-
 class Order {
 	private static int orderIdCounter;
 	private int orderId;
