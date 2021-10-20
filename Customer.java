@@ -1,5 +1,3 @@
-package SwiftFood;
-
 class Address {
 	private String doorNo;
 	private String street;
