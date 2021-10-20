@@ -1,5 +1,3 @@
-package SwiftFood;
-
 final class Food {
 	private String foodName;
 	private String cuisine;
