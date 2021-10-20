@@ -1,5 +1,3 @@
-package SwiftFood;
-
 public class Bill {
 	private static int counter;
 	private String billId;
