@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Bill {
 	private static int counter;
 	private String billId;
@@ -30,24 +32,45 @@ public class Bill {
 		this.paymentMode = paymentMode;
 	}
 	
-	public boolean generateBill(Order order, Customer customer) {
-		System.out.println("\nBill Details \n******************");
-		System.out.println("Bill Id : " + this.getBillId());
-		System.out.println("Items Ordered : " + "\n-----------");
-		for (Food food : order.getOrderedFoods()) {
-			System.out.println(food.getFoodName());
+	public void generateBill(Order order, Customer customer) {
+		try {
+			System.out.println("\nBill Details \n******************");
+			System.out.println("Bill Id : " + this.getBillId());
+			System.out.println("Items Ordered : " + "\n-----------");
+			for (Food food : order.getOrderedFoods()) {
+				System.out.println(food.getFoodName());
+			}
+			
+			double payableAmount = order.calculateTotalPrice(this.getPaymentMode());
+			System.out.println("-----------\nPre-total : " + (int)(payableAmount*100)/100 + " bucks.");
+			double finalAmount = customer.payBill(payableAmount);
+			
+		
+			if (customer instanceof PremiumCustomer) {
+			
+				Scanner usePoints = new Scanner(System.in);
+				System.out.println();
+				System.out.println("Would you like to use your Reward Points?");
+				char usePointsResponse = usePoints.next().charAt(0);
+			
+				if (usePointsResponse == 'Y' || usePointsResponse == 'y') {
+					finalAmount = ((PremiumCustomer)customer).redeemPoints(finalAmount);
+				}
+				else {
+					((PremiumCustomer) customer).setRewardPoints(((PremiumCustomer) customer).getRewardPoints() + (int)(0.1*payableAmount));
+					System.out.println("Current Reward Points : " + (((PremiumCustomer) customer).getRewardPoints()));
+				}
+				
+				usePoints.close();
+			}
+			System.out.println("Final Bill Amount After Math 55 : $" + (int)(finalAmount*100)/100.0);			
 		}
-		
-		double payableAmount = order.calculateTotalPrice(this.getPaymentMode());
-		System.out.println("-----------\nAmount Payable : " + (int)(payableAmount*100)/100 + " bucks.");
-		double finalAmount = customer.payBill(payableAmount);
-		System.out.println("Final Bill Amount After Math 55 : $" + (int)(finalAmount*100)/100.0);
-		
-		if (customer instanceof PremiumCustomer) {
-			((PremiumCustomer) customer).setRewardPoints(((PremiumCustomer) customer).getRewardPoints() + (int)(0.1*payableAmount));
-			System.out.println("Current Reward Points : " + (((PremiumCustomer) customer).getRewardPoints()));
+		catch (Exception e) {
+			System.out.println("Something went wrong :(");
 		}
-		
-		return true;
+		finally {
+			System.out.println("Thanks for dining. :)");
+		}
+			
 	}
 }
