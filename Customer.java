@@ -142,23 +142,55 @@ class RegularCustomer extends Customer {
 	}
 }
 
-class PremiumCustomer extends RegularCustomer{
+interface PremiumCards {
+	int WELCOME_POINTS = 100;
 	
-	private int rewardPoints = 0;
+	double redeemPoints(double totalPrice);
+	
+	void addPoints(double money);
+}
+
+class PremiumCustomer extends RegularCustomer implements PremiumCards{
+	
+	private int rewardPoints = WELCOME_POINTS;
 	
 	PremiumCustomer(){
 		super();
-		this.discountPercentage = super.discountPercentage + 10;
+		this.discountPercentage = super.discountPercentage + 3.0f;
 	}
 	
 	PremiumCustomer(String customerId, String customerName, long contactNumber, Address address){
 		super(customerId, customerName, contactNumber, address);
-		this.discountPercentage = super.discountPercentage + 10;
+		this.discountPercentage = super.discountPercentage + 3.0f;
 	}
 	
 	PremiumCustomer(String customerName, long contactNumber, Address address){
 		super(customerName,  contactNumber, address);
-		this.discountPercentage = super.discountPercentage + 10;
+		this.discountPercentage = super.discountPercentage + 3.0f;
+	}
+	
+	@Override
+	public double redeemPoints(double totalPrice) {
+		int pointsRedeemed = (int)(checkAvailablePoints(totalPrice) ? totalPrice : this.rewardPoints);
+		this.rewardPoints -= pointsRedeemed;
+		System.out.println(pointsRedeemed + " points deducted from your Premium Membership Points");
+		System.out.println(this.rewardPoints + " points remaining.");
+		return totalPrice - pointsRedeemed;
+	}
+	
+	public boolean checkAvailablePoints(double amountPayable) {
+		if(this.rewardPoints >= Math.round(amountPayable)) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void addPoints(double money) {
+		int pointsAdded = (int)money/10;
+		this.rewardPoints += pointsAdded;
+		System.out.println(pointsAdded + " points added for your purchase");
+		System.out.println(this.rewardPoints + " concurrent points.");
 	}
 	
 	public int getRewardPoints() {
